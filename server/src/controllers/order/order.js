@@ -86,6 +86,7 @@ export const confirmOrder = async (req, reply) => {
       address: deliveryPersonLocation?.address || "",
     };
 
+    req.server.io.to(orderId).emit("orderConfirmed", order);
     await order.save();
     reply.send(order);
   } catch (error) {
@@ -96,7 +97,7 @@ export const confirmOrder = async (req, reply) => {
 export const updateOrderStatus = async (req, reply) => {
   try {
     const { orderId } = req.params;
-    const { status } = req.body;
+    const { status, deliveryPersonLocation } = req.body;
 
     const { userId } = req.user;
 
@@ -117,8 +118,12 @@ export const updateOrderStatus = async (req, reply) => {
     }
 
     order.status = status;
-    order.deliveryPatnerLocation = deliveryPersonLocation;
+    order.deliveryPersonLocation = deliveryPersonLocation;
     await order.save();
+
+    // need to send to frontend in live
+    req.server.io.to(orderId).emit("liveTrackingUpdates", order);
+
     return reply.send(order);
   } catch (error) {
     return reply
@@ -137,13 +142,11 @@ export const getOrders = async (req, reply) => {
     if (customerId) {
       query.customerId = customerId;
     }
+    // if passed deliveryPartnerId, then branchId is must.
     if (deliveryPartnerId) {
       query.deliveryPartner = deliveryPartnerId;
       query.branch = branchId;
     }
-    // if (branchId) {
-    //   query.branch = branchId;
-    // }
 
     const orders = await Order.find(query).populate(
       "customer branch items.item deliveryPartner"
