@@ -1,5 +1,5 @@
 import { authRoutes } from "./auth.js";
-import { categoryRoutes, productRoutes } from "./products.js";
+import { categoryRoutes, productRoutes } from "./product.js";
 import { orderRoutes } from "./order.js";
 
 const prefix = "/api";

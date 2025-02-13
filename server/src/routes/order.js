@@ -19,7 +19,7 @@ export const orderRoutes = async (fastify, options) => {
   });
 
   // order/:orderId/status
-  // :orderId => passing this as params in url.
+  // :orderId => passing this as params in url
   fastify.post("/order", createOrder);
   fastify.get("/order", getOrders);
   fastify.patch("/order/:orderId/status", updateOrderStatus);

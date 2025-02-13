@@ -1,4 +1,4 @@
-import Product from "../../models/products.js";
+import Product from "../../models/product.js";
 export const getProductByCategoryID = async (req, reply) => {
   // http://localhost:3000/product?categoryId="DairyProduct"
   const { categoryId } = req.params;
